@@ -25,6 +25,11 @@ const UserSchema = new Schema({
     profilePicture: {
         type: String,
         default: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+    },
+
+    isAdmin: {
+        type: Boolean,
+        default: false
     }
 
 }, {

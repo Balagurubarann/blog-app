@@ -1,7 +1,7 @@
 import { Alert, Button, Modal, Spinner, TextInput } from "flowbite-react";
 import React, { useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import {
   updateStart,
   updateFailure,
@@ -9,7 +9,7 @@ import {
   deleteUserFailure,
   deleteUserStart,
   deleteUserSuccess,
-  logoutSuccess
+  logoutSuccess,
 } from "../redux/user/userSlice";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
@@ -28,7 +28,7 @@ export default function DashProfile() {
 
   const filePickerRef = useRef();
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   function handleImageChange(e) {
     const file = e.target.files[0];
@@ -79,7 +79,7 @@ export default function DashProfile() {
       dispatch(deleteUserStart());
 
       const response = await fetch(`api/user/delete/${currentUser._id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
 
       const data = response.json();
@@ -89,18 +89,15 @@ export default function DashProfile() {
       } else {
         dispatch(deleteUserSuccess(data));
       }
-
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
     }
   }
 
   async function logout() {
-
     try {
-
-      const response = await fetch('/api/user/logout', {
-        method: 'POST'
+      const response = await fetch("/api/user/logout", {
+        method: "POST",
       });
 
       const data = response.json();
@@ -108,13 +105,11 @@ export default function DashProfile() {
       if (!response.ok) {
         console(data.message);
       } else {
-        dispatch(logoutSuccess())
+        dispatch(logoutSuccess());
       }
-
     } catch (error) {
-      throw error
+      throw error;
     }
-
   }
 
   return (
@@ -181,12 +176,25 @@ export default function DashProfile() {
             "Save Changes"
           )}
         </Button>
+        {currentUser.isAdmin && (
+          <Link to={'/create-post'}>
+            <Button
+              type="button"
+              gradientDuoTone="purpleToPink"
+              className="w-full"
+            >
+              Create a new post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className="text-red-500 flex justify-between mt-5">
         <span className="cursor-pointer" onClick={() => setShowModel(true)}>
           Delete account
         </span>
-        <span className="cursor-pointer" onClick={logout}>Logout</span>
+        <span className="cursor-pointer" onClick={logout}>
+          Logout
+        </span>
       </div>
 
       {showModel && (

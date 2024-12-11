@@ -65,7 +65,7 @@ exports.login = async (req, res, next) => {
             return next(errorHandler(400, "Invalid Password"));
         }
 
-        const token = JWT.sign({ userId: existingUser._id }, process.env.SECRET_KEY, { expiresIn: '1d' });
+        const token = JWT.sign({ userId: existingUser._id, isAdmin: existingUser.isAdmin}, process.env.SECRET_KEY, { expiresIn: '1d' });
 
         const { password: pass, ...rest } = existingUser._doc;
 
@@ -93,7 +93,7 @@ exports.googleAuth = async (req, res, next) => {
         const user = await User.findOne({ email });
 
         if (user) {
-            const token = JWT.sign({ userId: user._id}, process.env.SECRET_KEY);
+            const token = JWT.sign({ userId: user._id, isAdmin: user.isAdmin }, process.env.SECRET_KEY);
 
             const { password, ...rest } = user._doc;
 
@@ -109,7 +109,7 @@ exports.googleAuth = async (req, res, next) => {
             });
 
             await newUser.save();
-            const token = JWT.sign({ userId: newUser._id }, process.env.SECRET_KEY, { expiresIn: '1d' });
+            const token = JWT.sign({ userId: newUser._id, isAdmin: newUser.isAdmin }, process.env.SECRET_KEY, { expiresIn: '1d' });
             const { password, ...rest } = newUser._doc;
             res.status(200).cookie('access_token', token, { 
                 httpOnly: true, 
