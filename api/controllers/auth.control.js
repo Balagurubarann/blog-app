@@ -71,7 +71,7 @@ exports.login = async (req, res, next) => {
 
         res.status(200).cookie("access_token", token, {
             httpOnly: true,
-            maxAge: 60 * 60 * 1000
+            maxAge: 60 * 60 * 1000 * 24
         }).json(rest);
 
     } catch (error) {
@@ -113,7 +113,7 @@ exports.googleAuth = async (req, res, next) => {
             const { password, ...rest } = newUser._doc;
             res.status(200).cookie('access_token', token, { 
                 httpOnly: true, 
-                maxAge: 60 * 60 * 1000
+                maxAge: 60 * 60 * 1000 * 24
             }).json(rest);
         }
 
