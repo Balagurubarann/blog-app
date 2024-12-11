@@ -2,10 +2,7 @@ const User = require("../models/user.model.js");
 const { hashSync } = require('bcryptjs');
 const { errorHandler } = require("../utils/error.js");
 
-// 675434add7a42a3feaa0a79c
-
 exports.updateUser = async (req, res, next) => {
-
 
     try {
 
@@ -13,7 +10,7 @@ exports.updateUser = async (req, res, next) => {
         const { _id } = req.user;
         const { username, password, email, profilePicture } = req.body;
 
-        if (userId === _id) {
+        if (userId !== _id) {
             return next(errorHandler(403, "You are not allowed to update this user"));
         }
 
@@ -21,7 +18,7 @@ exports.updateUser = async (req, res, next) => {
             if (password.length < 6) {
                 return next(errorHandler(400, "Password must  atleast have 6 characters"));
             }
-            password = bcrypt.hashSync(password, 10);
+            password = hashSync(password, 10);
         }
 
         if (username) {
@@ -47,6 +44,26 @@ exports.updateUser = async (req, res, next) => {
 
         const { password: withoutPassword, ...rest } = updateUser._doc;
         res.status(200).json(rest);
+
+    } catch (error) {
+        next(error);
+    }
+
+}
+
+exports.deleteUser = async (req, res, next) => {
+
+    try {
+
+        const { userId } = req.params;
+        const { userId: id } = req.user;
+        
+        if (id !== userId) {
+            return next(errorHandler(403, "You are not allowed to delete this user"));
+        }
+
+        await User.findByIdAndDelete(userId);
+        res.status(200).json("User deleted successfully");
 
     } catch (error) {
         next(error);

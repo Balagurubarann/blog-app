@@ -8,7 +8,9 @@ exports.verifyUser = async (req, res, next) => {
 
         const token = req.cookies.access_token;
 
-        if (!token) {            
+
+        if (!token) {       
+            console.log("No Token found!");     
             return next(errorHandler(401, 'Unauthorized'));
         }
     
