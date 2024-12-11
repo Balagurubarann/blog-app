@@ -1,15 +1,28 @@
-import { Alert, Button, Spinner, TextInput } from "flowbite-react";
+import { Alert, Button, Modal, Spinner, TextInput } from "flowbite-react";
 import React, { useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateStart, updateFailure, updateSuccess } from "../redux/user/userSlice";
+import {
+  updateStart,
+  updateFailure,
+  updateSuccess,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess
+} from "../redux/user/userSlice";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function DashProfile() {
-  const { currentUser, loading, error: errorMessage } = useSelector((state) => state.user);
+  const {
+    currentUser,
+    loading,
+    error: errorMessage,
+  } = useSelector((state) => state.user);
 
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [formData, setFormData] = useState({});
   const [isUpdated, setIsUpdated] = useState(false);
+  const [showModel, setShowModel] = useState(false);
 
   const filePickerRef = useRef();
   const dispatch = useDispatch();
@@ -30,16 +43,16 @@ export default function DashProfile() {
     e.preventDefault();
 
     if (Object.keys(formData).length === 0) {
-      setIsUpdated(false)
-      dispatch(updateFailure("Can\'t upload data"));
+      setIsUpdated(false);
+      dispatch(updateFailure("Can't upload data"));
     }
 
     try {
       dispatch(updateStart());
       const response = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -51,32 +64,40 @@ export default function DashProfile() {
         setIsUpdated(true);
         dispatch(updateSuccess(data));
       }
-
-
     } catch (error) {
       dispatch(updateFailure(error.message));
     }
+  }
 
-  } 
+  async function handleDeleteUser(e) {
+    setShowModel(false);
+
+    try {
+      dispatch(deleteUserStart());
+
+      const response = await fetch(`api/user/delete/${currentUser._id}`, {
+        method: 'DELETE'
+      });
+
+      const data = response.json();
+
+      if (!response.ok) {
+        dispatch(deleteUserFailure(data.message));
+      } else {
+        dispatch(deleteUserSuccess(data));
+      }
+
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  }
 
   return (
     <div className="w-full p-3 mx-auto max-w-lg">
       <h1 className="my-7 text-center font-semibold text-3xl dark:text-white">
         Profile
-        {
-          errorMessage && (
-            <Alert color="failure">
-              { errorMessage }
-            </Alert>
-          )
-        }
-        {
-          isUpdated && (
-            <Alert color="success">
-              Changes Saved
-            </Alert>
-          )
-        }
+        {errorMessage && <Alert color="failure">{errorMessage}</Alert>}
+        {isUpdated && <Alert color="success">Changes Saved</Alert>}
       </h1>
       <form className="flex flex-col gap-5" onSubmit={handleFormUpdate}>
         <input
@@ -120,21 +141,50 @@ export default function DashProfile() {
           placeholder="password"
         />
 
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline disabled={loading}>
-          {
-            loading ? 
-              <>
-                <Spinner size="sm" />
-                <span className="ps-2">Saving ...</span>
-              </>:
-            'Save Changes'
-          }
+        <Button
+          type="submit"
+          gradientDuoTone="purpleToBlue"
+          outline
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Spinner size="sm" />
+              <span className="ps-2">Saving ...</span>
+            </>
+          ) : (
+            "Save Changes"
+          )}
         </Button>
       </form>
       <div className="text-red-500 flex justify-between mt-5">
-        <span className="cursor-pointer">Delete account</span>
+        <span className="cursor-pointer" onClick={() => setShowModel(true)}>
+          Delete account
+        </span>
         <span className="cursor-pointer">Logout</span>
       </div>
+
+      {showModel && (
+        <Modal show={showModel} onClose={() => setShowModel(false)}>
+          <Modal.Header />
+          <Modal.Body>
+            <div className="text-center">
+              <HiOutlineExclamationCircle className="h-14 w-14 text-red-700 mx-auto" />
+              <h3 className="text-lg">
+                Are you sure, you want to delete this account?
+              </h3>
+              <div className="flex gap-4 justify-center">
+                <Button color="failure" onClick={handleDeleteUser}>
+                  Yes, delete
+                </Button>
+                <Button color="gray" onClick={() => setShowModel(false)}>
+                  No, cancel
+                </Button>
+              </div>
+            </div>
+          </Modal.Body>
+        </Modal>
+      )}
     </div>
   );
 }
