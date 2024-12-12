@@ -79,7 +79,7 @@ export default function DashProfile() {
         .then((response) => response.json())
         .then((data) => {
           setImageURL(data.secure_url);
-          setFormData({ ...formData, profilePicture: data.secure_url });
+          setFormData(formData => ({ ...formData, profilePicture: data.secure_url }));
         })
         .catch((err) => {
           console.error("Failed to update profile picture")
