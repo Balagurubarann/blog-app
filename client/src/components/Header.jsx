@@ -68,7 +68,7 @@ export default function Header() {
           <Dropdown
             arrowIcon={false}
             inline
-            label={<Avatar alt="user" img={currentUser.profilePicture} rounded />}
+            label={<Avatar alt="user" img={currentUser.profilePicture} rounded className="w-12 h-6" />}
           >
             <Dropdown.Header>
               <span className="block text-sm">

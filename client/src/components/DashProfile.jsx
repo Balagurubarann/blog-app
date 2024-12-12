@@ -24,15 +24,68 @@ export default function DashProfile() {
   const [isUpdated, setIsUpdated] = useState(false);
   const [showModel, setShowModel] = useState(false);
 
-  const [imageURL, setImageURL] = useState("");
+  const [imageURL, setImageURL] = useState(null);
 
   const filePickerRef = useRef();
   const dispatch = useDispatch();
 
   function handleImageChange(e) {
     const file = e.target.files[0];
+
+    if (!file) {
+      console.error("No Files found");
+      dispatch(updateFailure("No Files Found"));
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      console.error("File is too large");
+      dispatch(updateFailure("File is too large"));
+      return;
+    }
+
+    if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+      console.error("Unsupported file type");
+      dispatch(updateFailure("Unsupported file type"));
+      return;
+    }
+
     if (file) {
-      
+      uploadImage(file);
+      return;
+    }
+  }
+
+  function uploadImage(file) {
+    try {
+      if (!file) {
+        console.error("Image file not found");
+        return;
+      }
+
+      const cloudFormData = new FormData();
+      cloudFormData.append("file", file);
+      cloudFormData.append("upload_preset", import.meta.env.VITE_PRESET);
+      cloudFormData.append("folder", "users/profile_pictures")
+      fetch(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUD_NAME
+        }/image/upload`,
+        {
+          method: "POST",
+          body: cloudFormData,
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setImageURL(data.secure_url);
+          setFormData({ ...formData, profilePicture: data.secure_url });
+        })
+        .catch((err) => {
+          console.error("Failed to update profile picture")
+        });
+    } catch (error) {
+      console.error("Failed to update profile picture")
     }
   }
 
