@@ -1,4 +1,4 @@
-import { Badge, Button, FileInput, Select, TextInput } from "flowbite-react";
+import { Button, FileInput, Select, TextInput } from "flowbite-react";
 import React from "react";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -12,6 +12,8 @@ const categories = [
     "favorites",
     "electronics",
   ].sort();
+
+
 
 export default function CreatePost() {
   return (
@@ -49,7 +51,7 @@ export default function CreatePost() {
         </div>
         <ReactQuill theme="snow" placeholder="Write here ..." className="h-72 mb-14 dark:text-white" required />
         <Button type="submit" gradientDuoTone="purpleToBlue">
-            Add Post
+            Publish Post
         </Button>
       </form>
     </div>

@@ -13,8 +13,6 @@ exports.createPost = async (req, res, next) => {
       return next(errorHandler(400, "Please provide all required fields"));
     }
 
-    console.log(req.user);
-
     const slug = req.body.title
       .split(" ")
       .join("-")

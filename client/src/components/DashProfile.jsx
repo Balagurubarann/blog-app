@@ -1,7 +1,7 @@
 import { Alert, Button, Modal, Spinner, TextInput } from "flowbite-react";
 import React, { useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   updateStart,
   updateFailure,
@@ -20,21 +20,19 @@ export default function DashProfile() {
     error: errorMessage,
   } = useSelector((state) => state.user);
 
-  const [imageFile, setImageFile] = useState(null);
-  const [imageFileUrl, setImageFileUrl] = useState(null);
   const [formData, setFormData] = useState({});
   const [isUpdated, setIsUpdated] = useState(false);
   const [showModel, setShowModel] = useState(false);
 
+  const [imageURL, setImageURL] = useState("");
+
   const filePickerRef = useRef();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   function handleImageChange(e) {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
-      setImageFileUrl(URL.createObjectURL(file));
+      
     }
   }
 
@@ -134,7 +132,7 @@ export default function DashProfile() {
           onClick={() => filePickerRef.current.click()}
         >
           <img
-            src={imageFileUrl || currentUser.profilePicture}
+            src={imageURL || currentUser.profilePicture}
             alt="user"
             className="rounded-full w-full h-full object-cover border-5 border-gray-900"
           />
@@ -177,7 +175,7 @@ export default function DashProfile() {
           )}
         </Button>
         {currentUser.isAdmin && (
-          <Link to={'/create-post'}>
+          <Link to={"/create-post"}>
             <Button
               type="button"
               gradientDuoTone="purpleToPink"
