@@ -15,4 +15,9 @@ export default defineConfig({
       }
     }
   },
+  resolve: {
+    alias: {
+      quill: 'quill/dist/quill.min.js',
+    }
+  },
 })

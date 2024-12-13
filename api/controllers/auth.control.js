@@ -87,7 +87,7 @@ exports.googleAuth = async (req, res, next) => {
         const { name, email, googlePhotoUrl } = req.body;
 
         if (!name || !email || name === "" || email === "") {
-            next(errorHandle(400, "All fields are required"));
+            next(errorHandler(400, "All fields are required"));
         }
 
         const user = await User.findOne({ email });
