@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Label, TextInput, Button, Alert, Spinner } from 'flowbite-react';
-import { logInStart, logInSuccess, logInFailure } from "../redux/user/userSlice";
-import { useDispatch, useSelector } from 'react-redux'; 
+import { Label, TextInput, Button, Alert, Spinner } from "flowbite-react";
+import {
+  logInStart,
+  logInSuccess,
+  logInFailure,
+} from "../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../components/OAuth";
 
 export default function Login() {
-
-  const [formData, setFormData] = useState('');
-  const { loading, error: errorMessage } = useSelector(state => state.user);
+  const [formData, setFormData] = useState("");
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
-  const { theme } = useSelector(state => state.theme);
-
+  const dispatch = useDispatch();
+  const { theme } = useSelector((state) => state.theme);
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -22,35 +24,32 @@ export default function Login() {
     e.preventDefault();
 
     if (!formData.password || !formData.email) {
-      return dispatch(logInFailure("All fields are required"))
+      return dispatch(logInFailure("All fields are required"));
     }
 
     try {
-
       dispatch(logInStart());
 
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: 'include'
-      })
+        credentials: "include",
+      });
 
       const data = await response.json();
 
       if (data.success === false) {
-        dispatch(logInFailure(data.message))
+        dispatch(logInFailure(data.message));
       }
 
       if (response.ok) {
         dispatch(logInSuccess(data));
-        navigate('/');
+        navigate("/");
       }
-
     } catch (error) {
       dispatch(logInFailure(error.message));
     }
-
   }
 
   return (
@@ -76,37 +75,47 @@ export default function Login() {
           <form className="flex flex-col gap-4" onSubmit={loginUser}>
             <div>
               <Label value="Email" />
-              <TextInput type="email" id="email" name="email" placeholder="name@domain.com" onChange={ handleChange } />
+              <TextInput
+                type="email"
+                id="email"
+                name="email"
+                placeholder="name@domain.com"
+                onChange={handleChange}
+              />
             </div>
             <div>
               <Label value="Password" />
-              <TextInput type="password" id="password" name="password" onChange={ handleChange } />
+              <TextInput
+                type="password"
+                id="password"
+                name="password"
+                onChange={handleChange}
+              />
             </div>
-            <Button color={theme === 'light'? 'dark': 'blue'} type="submit" className="text-xl" disabled={ loading }>
-              {
-                loading? (
-                    <>
-                      <Spinner size='sm' />
-                      <span className="ps-2">Loading ...</span>
-                    </>
-                ): 'Login'
-              }
+            <Button
+              color={theme === "light" ? "dark" : "blue"}
+              type="submit"
+              className="text-xl"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="ps-2">Loading ...</span>
+                </>
+              ) : (
+                "Login"
+              )}
             </Button>
             <OAuth />
           </form>
           <div className="flex gap-2 mt-5 text-sm">
-              <span className="dark:text-white">Create an account?</span>
-              <Link to="/register" className="text-blue-500">
-                Register
-              </Link>
-            </div>
-            {
-              errorMessage && (
-                <Alert color="failure">
-                  {errorMessage}
-                </Alert>
-              )
-            }
+            <span className="dark:text-white">Create an account?</span>
+            <Link to="/register" className="text-blue-500">
+              Register
+            </Link>
+          </div>
+          {errorMessage && <Alert color="failure">{errorMessage}</Alert>}
         </div>
       </div>
     </div>

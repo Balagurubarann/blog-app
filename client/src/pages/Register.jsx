@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Label, TextInput, Button, Alert, Spinner } from 'flowbite-react';
+import { Label, TextInput, Button, Alert, Spinner } from "flowbite-react";
 import OAuth from "../components/OAuth";
 import { useSelector } from "react-redux";
 
 export default function Register() {
-
-  const [formData, setFormData] = useState('');
+  const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { theme } = useSelector(state => state.theme);
+  const { theme } = useSelector((state) => state.theme);
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -24,16 +23,15 @@ export default function Register() {
     }
 
     try {
-
       setLoading(true);
       setErrorMessage(null);
 
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: 'include'
-      })
+        credentials: "include",
+      });
 
       const data = await response.json();
 
@@ -44,14 +42,12 @@ export default function Register() {
       setLoading(false);
 
       if (response.ok) {
-        navigate('/');
+        navigate("/");
       }
-
     } catch (error) {
       setErrorMessage(error.message);
       setLoading(false);
     }
-
   }
 
   return (
@@ -77,41 +73,56 @@ export default function Register() {
           <form className="flex flex-col gap-4" onSubmit={registerUser}>
             <div>
               <Label value="Username" />
-              <TextInput type="text" id="username" name="username" onChange={ handleChange } />
+              <TextInput
+                type="text"
+                id="username"
+                name="username"
+                onChange={handleChange}
+              />
             </div>
             <div>
               <Label value="Email" />
-              <TextInput type="email" id="email" name="email" placeholder="name@domain.com" onChange={ handleChange } />
+              <TextInput
+                type="email"
+                id="email"
+                name="email"
+                placeholder="name@domain.com"
+                onChange={handleChange}
+              />
             </div>
             <div>
               <Label value="Password" />
-              <TextInput type="password" id="password" name="password" onChange={ handleChange } />
+              <TextInput
+                type="password"
+                id="password"
+                name="password"
+                onChange={handleChange}
+              />
             </div>
-            <Button color={theme === 'light'? 'dark': 'blue'} type="submit" className="text-xl" disabled={ loading }>
-              {
-                loading? (
-                    <>
-                      <Spinner size='sm' />
-                      <span className="ps-2">Loading ...</span>
-                    </>
-                ): 'Register'
-              }
+            <Button
+              color={theme === "light" ? "dark" : "blue"}
+              type="submit"
+              className="text-xl"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="ps-2">Loading ...</span>
+                </>
+              ) : (
+                "Register"
+              )}
             </Button>
             <OAuth />
           </form>
           <div className="flex gap-2 mt-5 text-sm">
-              <span className="dark:text-white">Have an account?</span>
-              <Link to="/login" className="text-blue-500">
-                Login
-              </Link>
-            </div>
-            {
-              errorMessage && (
-                <Alert color="failure">
-                  {errorMessage}
-                </Alert>
-              )
-            }
+            <span className="dark:text-white">Have an account?</span>
+            <Link to="/login" className="text-blue-500">
+              Login
+            </Link>
+          </div>
+          {errorMessage && <Alert color="failure">{errorMessage}</Alert>}
         </div>
       </div>
     </div>

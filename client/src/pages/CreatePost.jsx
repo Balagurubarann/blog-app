@@ -108,7 +108,7 @@ export default function CreatePost() {
         dispatch(createPostFailure(data.message));
       } else {
         dispatch(createPostSuccess(data));
-        navigate('/');
+        navigate(`/post/${data.slug}`);
       }
     } catch (error) {
       dispatch(createPostFailure(error.message));
