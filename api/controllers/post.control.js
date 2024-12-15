@@ -66,14 +66,56 @@ exports.getPosts = async (req, res, next) => {
     );
 
     const lastMonthPost = await Post.countDocuments({
-      createdAt: { $gte: monthAgo }
+      createdAt: { $gte: monthAgo },
     });
 
     res.status(200).json({
       posts,
       postCount,
-      lastMonthPost
-    })
+      lastMonthPost,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updatePost = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { title, category, image, content } = req.body;
+    const { isAdmin } = req.user;
+
+    if (!isAdmin) {
+      return next(errorHandler(403, "You are not allowed to create this post"));
+    }
+
+    if (!userId) {
+      return next(errorHandler(400, "No user id found"));
+    }
+
+    if (!req.body.title || !req.body.content) {
+      return next(errorHandler(400, "Please provide all required fields"));
+    }
+
+    const slug = req.body.title
+      .split(" ")
+      .join("-")
+      .toLowerCase()
+      .replace("/[^0-9a-zA-Z]/g", "");
+
+    const updatedPost = await Post.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          title,
+          category,
+          image,
+          content,
+          slug
+        },
+      }, { new: true });
+
+    return res.status(200).json(updatedPost);
 
   } catch (error) {
     next(error);

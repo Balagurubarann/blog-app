@@ -35,7 +35,6 @@ export default function CreatePost() {
   const [imageURL, setImageURL] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState("");
 
   const navigate = useNavigate();
 
@@ -123,9 +122,8 @@ export default function CreatePost() {
     });
   }
 
-  function handleCategory(e) {
-    setSelectedValue(e.target.value);
-  }
+  console.log(formData);
+
 
   return (
     <div className="min-h-full mx-auto p-3 max-w-3xl">
@@ -145,8 +143,8 @@ export default function CreatePost() {
             name="title"
             onChange={handleChange}
           />
-          <Select onChange={handleCategory} name="category" id="category">
-            <option value="uncategorized" disabled>
+          <Select onChange={handleChange} value={formData.category} name="category" id="category">
+            <option value="uncategorized">
               Select a category
             </option>
             {categories.map((category) => {
