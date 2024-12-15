@@ -15,7 +15,7 @@ import {
   createPostSuccess,
 } from "../redux/user/userSlice.js";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   "adventure",
@@ -35,6 +35,7 @@ export default function CreatePost() {
   const [imageURL, setImageURL] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
 
   const navigate = useNavigate();
 
@@ -116,10 +117,14 @@ export default function CreatePost() {
   }
 
   function handleChange(e) {
-    return setFormData((prevFormData) => ({
-      ...prevFormData,
+    return setFormData({
+      ...formData,
       [e.target.name]: e.target.value,
-    }));
+    });
+  }
+
+  function handleCategory(e) {
+    setSelectedValue(e.target.value);
   }
 
   return (
@@ -140,8 +145,10 @@ export default function CreatePost() {
             name="title"
             onChange={handleChange}
           />
-          <Select onSelect={handleChange}>
-            <option value="uncategorized">Select a category</option>
+          <Select onChange={handleCategory} name="category" id="category">
+            <option value="uncategorized" disabled>
+              Select a category
+            </option>
             {categories.map((category) => {
               return (
                 <option value={category} key={category + new Date().getTime()}>
