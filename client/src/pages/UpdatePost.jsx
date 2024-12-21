@@ -31,11 +31,13 @@ const categories = [
 export default function UpdatePost() {
 
   const { loading, currentUser } = useSelector(state => state.user);
+  const dispatch = useDispatch();
 
   const [currentFormData, setCurrentFormData] = useState({});
   const [postId, setPostId] = useState('');
   const [content, setContent] = useState('');
-
+  const [imageFile, setImageFile] = useState(null);
+  
   useEffect(() => {
 
     async function fetchPost() {
@@ -52,7 +54,7 @@ export default function UpdatePost() {
           throw error.message;
         } else {
           setCurrentFormData(data.posts[0]);
-          setContent(currentFormData.content);
+          setContent(data.posts[0].content);
         }
 
       } catch (error) {
@@ -112,7 +114,6 @@ export default function UpdatePost() {
       )
         .then((response) => response.json())
         .then((data) => {
-          setImageURL(data.secure_url);
           setCurrentFormData((formData) => ({
             ...formData,
             image: data.secure_url,
@@ -130,6 +131,30 @@ export default function UpdatePost() {
     }
   }
 
+  async function updatePost(e) {
+    e.preventDefault();
+    try {
+      dispatch(createStart());
+      const response = await fetch(`/api/post/update/${postId}`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...currentFormData, content })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        dispatch(createPostFailure(data.message));
+      } else {
+        dispatch(createPostSuccess(data));
+        navigate('/')
+      }
+
+    } catch (error) {
+      dispatch(createPostFailure("Cannot update post"));
+    }
+  }
+
   console.log(postId);
   console.log(currentFormData, content);
 
@@ -138,7 +163,7 @@ export default function UpdatePost() {
           Update Post
         </h2>
   
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={updatePost}>
           <div className="flex flex-col gap-4 sm:flex-row justify-between">
             <TextInput
               className="flex-1"
@@ -202,10 +227,10 @@ export default function UpdatePost() {
             {loading ? (
               <>
                 <Spinner size="sm" />
-                <span className="ps-2">Publish Post</span>
+                <span className="ps-2">Update Post</span>
               </>
             ) : (
-              "Publish Post"
+              "Update Post"
             )}
           </Button>
         </form>
