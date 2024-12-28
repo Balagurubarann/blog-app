@@ -15,7 +15,7 @@ import {
   createPostSuccess,
 } from "../redux/user/userSlice.js";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const categories = [
   "adventure",
@@ -37,6 +37,8 @@ export default function UpdatePost() {
   const [postId, setPostId] = useState('');
   const [content, setContent] = useState('');
   const [imageFile, setImageFile] = useState(null);
+  const navigate = useNavigate();
+  const params = useParams();
   
   useEffect(() => {
 
@@ -44,7 +46,7 @@ export default function UpdatePost() {
 
       try {
 
-        setPostId(location.pathname.split('/').at(-1));
+        setPostId(params.postId);
 
         const response = await fetch(`/api/post/get-posts?postId=${postId}`);
 
@@ -67,11 +69,21 @@ export default function UpdatePost() {
       fetchPost();
     }
 
-  }, []);
+  }, [postId]);
+
+  useEffect(() => {
+
+    return setCurrentFormData(prevFormData => ({
+      ...prevFormData,
+      content
+    }))
+
+  }, [content]);
 
   function handleOnChange(e) {
     return setCurrentFormData(prevFormData => ({
       ...prevFormData,
+      content,
       [e.target.name]: e.target.value
     }))
   }
@@ -131,39 +143,41 @@ export default function UpdatePost() {
     }
   }
 
-  async function updatePost(e) {
+  async function update(e) {
     e.preventDefault();
     try {
-      dispatch(createStart());
-      const response = await fetch(`/api/post/update/${postId}`, {
-        method: "POST",
+      console.log("Update Start");
+      const response = await fetch(`/api/post/update/${currentFormData._id}/${currentFormData.userId}`, {
+        method: "PUT",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...currentFormData, content })
+        body: JSON.stringify(currentFormData)
       });
-
-      const data = await response.json();
+      
 
       if (!response.ok) {
+        console.log(data.message);
         dispatch(createPostFailure(data.message));
-      } else {
-        dispatch(createPostSuccess(data));
-        navigate('/')
-      }
+      } 
+      console.log("After response", response);
+      const data = await response.json();
+      console.log("Fetched Data", data);
+      navigate(`/post/${data.slug}`)
 
     } catch (error) {
+      console.log(error.message)
       dispatch(createPostFailure("Cannot update post"));
     }
   }
 
-  console.log(postId);
-  console.log(currentFormData, content);
+  console.log("Current Form Data: ", currentFormData);
+  console.log(params);
 
   return <div className="min-h-full mx-auto p-3 max-w-3xl">
         <h2 className="text-center text-3xl my-7 font-semibold">
           Update Post
         </h2>
   
-        <form className="flex flex-col gap-4" onSubmit={updatePost}>
+        <form className="flex flex-col gap-4" onSubmit={update}>
           <div className="flex flex-col gap-4 sm:flex-row justify-between">
             <TextInput
               className="flex-1"

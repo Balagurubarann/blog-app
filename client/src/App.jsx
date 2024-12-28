@@ -29,7 +29,7 @@ function App() {
           </Route>
           <Route element={<AdminPrivateRoute />}>
             <Route path="/create-post" element={<CreatePost />} />
-            <Route path={`/update-post/:userId`} element={<UpdatePost />} />
+            <Route path={`/update-post/:postId`} element={<UpdatePost />} />
           </Route>
         </Routes>
         {/* <FooterComponent /> */}

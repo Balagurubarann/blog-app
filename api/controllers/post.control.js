@@ -81,7 +81,7 @@ exports.getPosts = async (req, res, next) => {
 
 exports.updatePost = async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const { postId } = req.params;
     const { title, category, image, content } = req.body;
     const { isAdmin } = req.user;
 
@@ -89,29 +89,22 @@ exports.updatePost = async (req, res, next) => {
       return next(errorHandler(403, "You are not allowed to create this post"));
     }
 
-    if (!userId) {
-      return next(errorHandler(400, "No user id found"));
+    if (!postId) {
+      return next(errorHandler(400, "No post found"));
     }
 
     if (!req.body.title || !req.body.content) {
       return next(errorHandler(400, "Please provide all required fields"));
     }
 
-    const slug = req.body.title
-      .split(" ")
-      .join("-")
-      .toLowerCase()
-      .replace("/[^0-9a-zA-Z]/g", "");
-
     const updatedPost = await Post.findOneAndUpdate(
-      { userId },
+      { _id: postId },
       {
         $set: {
           title,
           category,
           image,
-          content,
-          slug
+          content
         },
       }, { new: true });
 
