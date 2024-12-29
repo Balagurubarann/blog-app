@@ -5,14 +5,21 @@ import {
   TableCell,
   TableHeadCell,
   TableRow,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Button,
 } from "flowbite-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { HiPencil, HiTrash } from "react-icons/hi";
+import { HiOutlineExclamationCircle, HiPencil, HiTrash } from "react-icons/hi";
 
 export default function DashPosts() {
   const [userPosts, setUserPosts] = useState([]);
   const { currentUser } = useSelector((state) => state.user);
+  const [showMore, setShowMore] = useState(true);
+  const [showDeleteModel, setShowDeleteModel] = useState(false);
+  const [currentDeletionId, setCurrentDeletionId] = useState('');
 
   useEffect(() => {
     async function fetchPosts() {
@@ -23,12 +30,13 @@ export default function DashPosts() {
 
         const data = await response.json();
 
-        console.log(data.posts);
-
         if (!response.ok) {
           console.log("Can't get posts");
         } else {
           setUserPosts(data.posts);
+          if (data.posts.length < 3) {
+            setShowMore(false);
+          }
         }
       } catch (error) {
         throw error;
@@ -39,6 +47,66 @@ export default function DashPosts() {
       fetchPosts();
     }
   }, [currentUser._id]);
+
+  async function handleShowMore(e) {
+    const startIndex = userPosts.length;
+    try {
+      const response = await fetch(
+        `/api/post/get-posts?postId=${currentUser._id}&startIndex=${startIndex}`
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (response.ok) {
+        setUserPosts((prev) => [...prev, ...data.posts]);
+        if (data.posts.length < 3) {
+          setShowMore(false);
+        }
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async function handleDeletePost() {
+    try {
+      setShowDeleteModel(false);
+      if (!currentDeletionId) {
+        console.log("No Post found");
+        return;
+      }
+
+      const response = await fetch(
+        `/api/post/delete/${currentDeletionId}/${currentUser._id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return data.message;
+      }
+
+      console.log();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  function handleDeletionModel(post_id) {
+    try {
+
+      setCurrentDeletionId(post_id);
+      setShowDeleteModel(true);
+
+    } catch (error) {
+      throw error;
+    }
+  }
 
   return (
     <div>
@@ -91,8 +159,11 @@ export default function DashPosts() {
                       <Link to={`/posts/${post.slug}`}>{post.title}</Link>
                     </Table.Cell>
                     <Table.Cell>
-                      <div className="flex gap-2 items-center justify-center">
-                        <HiTrash className="w-6 h-6 text-red-500 cursor-pointer" />
+                      <div
+                        className="flex gap-2 items-center justify-center cursor-pointer"
+                        onClick={() => handleDeletionModel(post._id)}
+                      >
+                        <HiTrash className="w-6 h-6 text-red-500" />
                         <span>Delete</span>
                       </div>
                     </Table.Cell>
@@ -110,6 +181,38 @@ export default function DashPosts() {
               );
             })}
           </Table>
+          {showMore && (
+            <button
+              className="bg-none text-blue-500 self-center w-full py-7"
+              onClick={handleShowMore}
+            >
+              Show more
+            </button>
+          )}
+          {showDeleteModel && (
+            <Modal
+              show={showDeleteModel}
+              onClose={() => setShowDeleteModel(false)}
+            >
+              <Modal.Header />
+              <Modal.Body>
+                <div className="text-center">
+                  <HiOutlineExclamationCircle className="h-14 w-14 text-red-700 mx-auto" />
+                  <h3 className="text-lg">
+                    Are you sure, you want to delete this post?
+                  </h3>
+                  <div className="flex gap-4 justify-center">
+                    <Button color="failure" onClick={handleDeletePost}>
+                      Yes, delete
+                    </Button>
+                    <Button color="gray" onClick={() => setShowDeleteModel(false)}>
+                      No, cancel
+                    </Button>
+                  </div>
+                </div>
+              </Modal.Body>
+            </Modal>
+          )}
         </>
       ) : (
         <p>You have no posts</p>

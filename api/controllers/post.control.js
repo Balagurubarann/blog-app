@@ -114,3 +114,30 @@ exports.updatePost = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.deletePost = async (req, res, next) => {
+
+  try {
+
+    const { postId, userId } = req.params;
+    const { isAdmin, userId: id } = req.user;
+
+    if (!postId) {
+      return next(errorHandler(400, "No Post Found!"));
+    }
+
+    console.log(req.user);
+
+    if (!isAdmin || id !== userId) {
+      return next(errorHandler(400, "You are not allowed to delete this post"));
+    }
+
+    await Post.findByIdAndDelete({ _id: postId });
+
+    return res.status(200).json({ message: "Post deleted Successfully!" });
+
+  } catch (error) {
+    next(error);
+  }
+
+}
