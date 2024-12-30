@@ -57,11 +57,9 @@ export default function DashPosts() {
 
       const data = await response.json();
 
-      console.log(data);
-
       if (response.ok) {
         setUserPosts((prev) => [...prev, ...data.posts]);
-        if (data.posts.length < 3) {
+        if (data.posts.length < 9) {
           setShowMore(false);
         }
       }
@@ -89,6 +87,8 @@ export default function DashPosts() {
 
       if (!response.ok) {
         return data.message;
+      } else {
+        setUserPosts(prev => prev.filter(post => post._id !== currentDeletionId))
       }
 
       console.log();
