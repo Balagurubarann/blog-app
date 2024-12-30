@@ -62,12 +62,12 @@ exports.deleteUser = async (req, res, next) => {
     const { userId } = req.params;
     const { userId: id, isAdmin } = req.user;
 
-    if (!id || !isAdmin) {
-      return next(errorHandler(403, "You are not allowed to delete this user"));
+    if (!id || !userId) {
+      return next(errorHandler(400, "No User Found"));
     }
 
-    if (!userId) {
-      return next(errorHandler(400, "No user found with this id"));
+    if (id !== userId && !isAdmin) {
+      return next(errorHandler(403, "You are not allowed to delete this user"));
     }
 
     await User.findByIdAndDelete(userId);
@@ -106,8 +106,6 @@ exports.getUsers = async (req, res, next) => {
     .sort({ createdAt: order })
     .skip(startIndex)
     .limit(limit);
-
-    console.log(users);
 
     const usersWithoutPassword = users.map(user => {
       const { password, ...rest } = user._doc;
