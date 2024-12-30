@@ -60,12 +60,14 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const { userId: id } = req.user;
+    const { userId: id, isAdmin } = req.user;
 
-    console.log(userId, id);
-
-    if (id !== userId) {
+    if (!id || !isAdmin) {
       return next(errorHandler(403, "You are not allowed to delete this user"));
+    }
+
+    if (!userId) {
+      return next(errorHandler(400, "No user found with this id"));
     }
 
     await User.findByIdAndDelete(userId);

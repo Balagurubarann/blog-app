@@ -70,7 +70,7 @@ export default function DashUsers() {
     try {
       setShowDeleteModel(false);
       if (!currentDeletionId) {
-        console.log("No Post found");
+        console.log("No User found");
         return;
       }
 
