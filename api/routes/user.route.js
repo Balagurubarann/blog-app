@@ -11,6 +11,6 @@ router
   .put("/update/:userId", verifyUser, updateUser)
   .delete("/delete/:userId", verifyUser, deleteUser)
   .post("/logout", logout)
-  .get("/getUsers", verifyUser, getUsers);
+  .get("/get-users", verifyUser, getUsers);
 
 module.exports = router;

@@ -92,7 +92,7 @@ exports.getUsers = async (req, res, next) => {
 
     const { isAdmin } = req.user;
 
-    if (isAdmin) {
+    if (!isAdmin) {
       return errorHandler(403, "You not allowed to view user accounts");
     }
 
@@ -104,6 +104,8 @@ exports.getUsers = async (req, res, next) => {
     .sort({ createdAt: order })
     .skip(startIndex)
     .limit(limit);
+
+    console.log(users);
 
     const usersWithoutPassword = users.map(user => {
       const { password, ...rest } = user._doc;
