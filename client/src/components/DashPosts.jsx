@@ -147,7 +147,7 @@ export default function DashPosts() {
                       })}
                     </Table.Cell>
                     <Table.Cell className="flex justify-center">
-                      <Link to={`/posts/${post.slug}`}>
+                      <Link to={`/post/${post.slug}`}>
                         <img
                           src={post.image}
                           alt={post.title}
@@ -156,7 +156,7 @@ export default function DashPosts() {
                       </Link>
                     </Table.Cell>
                     <Table.Cell>
-                      <Link to={`/posts/${post.slug}`}>{post.title}</Link>
+                      <Link to={`/post/${post.slug}`}>{post.title}</Link>
                     </Table.Cell>
                     <Table.Cell>
                       <div
