@@ -136,3 +136,21 @@ exports.getUsers = async (req, res, next) => {
 
 }
 
+exports.getUser = async (req, res, next) => {
+
+  try {
+
+    const { userId } = req.params;
+
+    if (userId) {
+      const user = await User.findOne({ _id: userId });
+
+      const { username, profilePicture } = user;
+
+      return res.status(200).json({ message: "User Fetched", username, profilePicture });
+    }
+
+  } catch (error) {
+    next (error);
+  }
+}

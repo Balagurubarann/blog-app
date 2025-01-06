@@ -141,14 +141,14 @@ export default function DashUsers() {
                       <img
                         src={user.profilePicture}
                         alt={user.username}
-                        className="w-10 h-10 rounded object-cover bg-gray-500"
+                        className="w-10 h-10 rounded-full object-cover bg-gray-500"
                       />
                     </Table.Cell>
                     <Table.Cell className="overflow-hidden">
                       {user.username}
                     </Table.Cell>
                     <Table.Cell className="overflow-hidden text-xs">{user.email}</Table.Cell>
-                    <Table.Cell className="grid place-items-center">{user.isAdmin ? (<FaCheck className="text-green-500"/>): (<FaTimes className="text-red-500" />)}</Table.Cell>
+                    <Table.Cell className="grid place-items-center -translate-y-4">{user.isAdmin ? (<FaCheck className="text-green-500"/>): (<FaTimes className="text-red-500" />)}</Table.Cell>
                     <Table.Cell>
                       <div
                         className="flex gap-2 items-center justify-center cursor-pointer"

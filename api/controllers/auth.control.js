@@ -48,7 +48,7 @@ exports.register = async (req, res, next) => {
 
     const { password: pass, ...rest } = user._doc;
 
-    res
+    return res
       .status(200)
       .cookie("access_token", token, {
         httpOnly: true,
@@ -90,7 +90,7 @@ exports.login = async (req, res, next) => {
 
     const { password: pass, ...rest } = existingUser._doc;
 
-    res
+    return res
       .status(200)
       .cookie("access_token", token, {
         httpOnly: true,
