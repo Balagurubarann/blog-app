@@ -6,6 +6,7 @@ const connection = require("./config/database");
 const userRoute = require("./routes/user.route.js");
 const userAuth = require("./routes/auth.route.js");
 const postRoute = require('./routes/post.route.js');
+const commentRoute = require("./routes/comment.route.js");
 const { handleError } = require("./middleware/error.handle.js");
 require("dotenv").config();
 
@@ -40,6 +41,7 @@ app.use(cookieParser());
 app.use("/api/user", userRoute);
 app.use("/api/auth", userAuth);
 app.use("/api/post", postRoute);
+app.use("/api/comment", commentRoute);
 
 app.use(handleError);
 

@@ -94,7 +94,7 @@ export default function PostPage() {
             {
               authorData && <div className="flex gap-2 items-center">
                 <img src={authorData.profilePicture} alt="" className="w-8 h-8 rounded-full" />
-                <span className="font-bold">{authorData.username}</span>
+                <span className="font-bold">@{authorData.username}</span>
               </div>
             }
           </span>

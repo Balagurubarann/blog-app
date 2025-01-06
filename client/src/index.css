@@ -28,6 +28,10 @@ table {
   margin: 0;
 }
 
+.post-content {
+  font-family: sans-serif;
+}
+
 .post-content p, li {
   margin-bottom: .5rem;
 }
