@@ -1,6 +1,7 @@
 import { Button, Spinner } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import CommentSection from "../components/CommentSection";
 
 export default function PostPage() {
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,7 @@ export default function PostPage() {
           alt={post.title}
           className="max-h-[700px] rounded object-cover w-full"
         />
-        <div className="text-xs flex justify-between">
+        <div className="text-xs flex justify-between items-center">
           <span>
             {
               authorData && <div className="flex gap-2 items-center">
@@ -104,6 +105,8 @@ export default function PostPage() {
       </div>
 
       <div className="p-3 max-w-2xl w-full mx-auto text-justify post-content" dangerouslySetInnerHTML={{__html: post && post.content}}></div>
+
+      <CommentSection />
 
     </main>
   );
