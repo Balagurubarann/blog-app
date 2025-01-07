@@ -1,10 +1,55 @@
 import { Button, Textarea } from "flowbite-react";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-export default function CommentSection() {
+export default function CommentSection({ postId }) {
   const { currentUser } = useSelector((state) => state.user);
+  const [comment, setComment] = useState('');
+  const [commentError, setCommentError] = useState(null);
+
+  async function handleComment(e) {
+
+    try {
+
+      setComment(e.target.value);
+
+    } catch (error) {
+      throw error;
+    }
+
+  }
+
+  async function handlePostComment(e) {
+
+    try {
+
+      if (postId) {
+
+        const response = await fetch(`api/comment/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ content: comment, postId, userId: currentUser._id })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setCommentError(null);
+        } else {
+          setCommentError(data.message);
+        }
+
+      } else {
+        setCommentError("No post id found.")
+      }
+
+    } catch (error) {
+      throw error;
+    }
+
+  }
 
   return (
     <>
@@ -16,15 +61,16 @@ export default function CommentSection() {
               <span className="text-blue-600">@{currentUser.email}</span>
             </p>
           </div>
-          <div className="comment-box flex flex-col gap-4">
+          <form onSubmit={ handlePostComment } className="comment-box flex flex-col gap-4">
             <Textarea
               className="h-40 resize-none"
               placeholder="Write here ..."
+              onChange={handleComment}
             />
             <Button gradientDuoTone="purpleToBlue" outline>
               Post comment
             </Button>
-          </div>
+          </form>
           <h1 className="text-2xl border-b border-slate-500 py-4 mt-10 ps-2">
             Comments
           </h1>

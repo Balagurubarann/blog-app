@@ -106,7 +106,7 @@ export default function PostPage() {
 
       <div className="p-3 max-w-2xl w-full mx-auto text-justify post-content" dangerouslySetInnerHTML={{__html: post && post.content}}></div>
 
-      <CommentSection />
+      <CommentSection postId={ post._id } />
 
     </main>
   );
