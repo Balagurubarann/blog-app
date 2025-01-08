@@ -45,23 +45,23 @@ export default function PostPage() {
       try {
         if (userId) {
           const response = await fetch(`/api/user/get-user/${userId}`);
-    
+
           const data = await response.json();
           if (response.ok) {
             setAuthorData(data);
           }
         }
-  
-      } catch (error) { 
+
+      } catch (error) {
         setError(true);
       }
-  
+
     }
 
     fetchUser(postCreatedBy);
 
   }, [postCreatedBy]);
-  
+
   if (loading)
     return (
       <>

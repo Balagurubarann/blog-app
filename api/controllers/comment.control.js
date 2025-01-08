@@ -8,7 +8,7 @@ exports.createComment = async (req, res, next) => {
 
     console.log(userId, _id);
 
-    if (userId != _id) {
+    if (userId !== _id) {
       return res.json({ message: "You are not allowed to post comment", success: false });
     }
 
@@ -22,3 +22,25 @@ exports.createComment = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getComments = async (req, res, next) => {
+
+  try {
+
+    const { postId } = req.params;
+
+    if (postId) {
+      return res.json({ message: "No post id found", success: false });
+    }
+
+    const comments = await Comment.find({ postId }).sort({ createdAt: -1 });
+
+    if (comments) {
+      return res.json({ message: "comments found", comments });
+    }
+
+  } catch (error) {
+    next(error);
+  }
+
+}
