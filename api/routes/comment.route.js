@@ -1,9 +1,9 @@
 const router = require("express").Router();
-const { createComment } = require("../controllers/comment.control.js");
+const { createComment, getComments } = require("../controllers/comment.control.js");
 const { verifyUser } = require("../utils/verifyUser.js")
 
-router 
+router
     .post("/create", verifyUser, createComment)
-    .get("/get-comments", getComments)
+    .get("/get-comments/:postId", getComments)
 
 module.exports = router;

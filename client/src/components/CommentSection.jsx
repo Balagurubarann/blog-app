@@ -1,5 +1,5 @@
 import { Button, Textarea } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -7,18 +7,38 @@ export default function CommentSection({ postId }) {
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setComment] = useState('');
   const [commentError, setCommentError] = useState(null);
+  const [postComments, setPostComments] = useState([]);
 
   async function handleComment(e) {
-
     try {
-
       setComment(e.target.value);
-
     } catch (error) {
       throw error;
     }
-
   }
+
+  useEffect(() => {
+
+    async function getPostComments() {
+
+      try {
+        const response = await fetch(`/api/comment/get-comments/${postId}`);
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setPostComments(data.comments);
+        }
+
+      } catch (error) {
+        throw error;
+      }
+
+    }
+
+    getPostComments();
+
+  }, [postId]);
 
   async function handlePostComment(e) {
 
@@ -83,6 +103,9 @@ export default function CommentSection({ postId }) {
           </Link>
         </div>
       )}
+
+
+
     </>
   );
 }
