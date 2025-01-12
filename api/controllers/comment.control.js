@@ -8,14 +8,18 @@ exports.createComment = async (req, res, next) => {
 
     console.log(userId, _id);
 
+    if (!content || !postId || !userId) {
+      return res.status(404).json({ message: "All fields are required", success: false });
+    }
+
     if (userId !== _id) {
-      return res.json({ message: "You are not allowed to post comment", success: false });
+      return res.status(403).json({ message: "You are not allowed to post comment", success: false });
     }
 
     const comment = await Comment.create({ content, postId, userId });
 
     if (comment) {
-      return res.json({ message: "Comment posted successfully", comment });
+      return res.status(200).json({ message: "Comment posted successfully", comment });
     }
 
   } catch (error) {
@@ -29,7 +33,7 @@ exports.getComments = async (req, res, next) => {
 
     const { postId } = req.params;
 
-    if (postId) {
+    if (!postId) {
       return res.json({ message: "No post id found", success: false });
     }
 

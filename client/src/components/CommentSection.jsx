@@ -1,13 +1,13 @@
-import { Button, Textarea } from "flowbite-react";
+import { Alert, Button, Textarea } from "flowbite-react";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Comments from "./Comments";
 
 export default function CommentSection({ postId }) {
   const { currentUser } = useSelector((state) => state.user);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [commentError, setCommentError] = useState(null);
-  const [postComments, setPostComments] = useState([]);
 
   async function handleComment(e) {
     try {
@@ -17,60 +17,39 @@ export default function CommentSection({ postId }) {
     }
   }
 
-  useEffect(() => {
-
-    async function getPostComments() {
-
-      try {
-        const response = await fetch(`/api/comment/get-comments/${postId}`);
-
-        const data = await response.json();
-
-        if (response.ok) {
-          setPostComments(data.comments);
-        }
-
-      } catch (error) {
-        throw error;
-      }
-
-    }
-
-    getPostComments();
-
-  }, [postId]);
-
   async function handlePostComment(e) {
+    e.preventDefault();
 
     try {
-
       if (postId) {
 
-        const response = await fetch(`api/comment/create`, {
+        const response = await fetch(`/api/comment/create`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ content: comment, postId, userId: currentUser._id })
+          body: JSON.stringify({ content: comment, postId, userId: currentUser._id }),
         });
         const data = await response.json();
 
         if (response.ok) {
           setCommentError(null);
+          setComment("");
         } else {
           setCommentError(data.message);
+          setComment("");
         }
-
       } else {
-        setCommentError("No post id found.")
+        setCommentError("No post id found.");
       }
 
+      setComment("");
     } catch (error) {
+      console.log(error);
       throw error;
     }
-
   }
-
+  
   return (
     <>
       {currentUser ? (
@@ -81,19 +60,23 @@ export default function CommentSection({ postId }) {
               <span className="text-blue-600">@{currentUser.email}</span>
             </p>
           </div>
-          <form onSubmit={ handlePostComment } className="comment-box flex flex-col gap-4">
+          <form
+            onSubmit={handlePostComment}
+            className="comment-box flex flex-col gap-4"
+          >
             <Textarea
               className="h-40 resize-none"
               placeholder="Write here ..."
               onChange={handleComment}
             />
-            <Button gradientDuoTone="purpleToBlue" outline>
+            <Button gradientDuoTone="purpleToBlue" outline type="submit">
               Post comment
             </Button>
           </form>
           <h1 className="text-2xl border-b border-slate-500 py-4 mt-10 ps-2">
             Comments
           </h1>
+          <Comments postId={postId} />
         </div>
       ) : (
         <div className="flex gap-2">
@@ -103,9 +86,6 @@ export default function CommentSection({ postId }) {
           </Link>
         </div>
       )}
-
-
-
     </>
   );
 }
