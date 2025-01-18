@@ -1,8 +1,14 @@
+import { Dropdown, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
+import { FaEllipsisV } from "react-icons/fa";
+
+import { useSelector } from "react-redux";
+import Comment from "./Comment.jsx";
 
 export default function Comments({ postId }) {
+  const { currentUser } = useSelector((state) => state.user);
+
   const [postComments, setPostComments] = useState([]);
-  const [commentUsers, setCommentUsers] = useState([]);
 
   useEffect(() => {
     async function getPostComments() {
@@ -20,56 +26,48 @@ export default function Comments({ postId }) {
     }
 
     getPostComments();
-  }, [postId]);
+  }, [postId, postComments.length]);
 
-  useEffect(() => {
-    async function fetchUser(userId) {
-      try {
-        if (userId) {
-          const response = await fetch(`/api/user/get-user/${userId}`);
 
-          const data = await response.json();
-          if (response.ok) {
-            setCommentUsers((prev) => [...prev, data]);
-          }
-        }
-      } catch (error) {
-        throw error;
-      }
+  function getDateTimeDiff(date1) {
+    const d1 = new Date(date1);
+    const d2 = new Date(new Date().toLocaleDateString());
+
+    if (isNaN(d1) || isNaN(d2)) {
+      throw new Error("Invalid date format");
     }
 
-    postComments.forEach((comment) => {
-      fetchUser(comment.userId);
-    });
-  }, [postComments]);
+    // Calculate the difference in milliseconds
+    const diffInMs = Math.abs(d2 - d1);
 
-  console.log(postComments);
+    // Convert milliseconds to days
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    const diffInSeconds = Math.floor(diffInMs / 1000); // Total seconds
+    const diffInMinutes = Math.floor(diffInSeconds / 60); // Total minutes
+    const diffInHours = Math.floor(diffInMinutes / 60);
+
+    if (diffInDays > 0) return diffInDays + "d ago";
+    else return "today";
+  }
 
   return (
     <div className="w-full min-h-10 my-10">
-      {postComments.map((comment, index) => {
-        return (
-          <>
-            <div className="my-5 px-5 py-2 flex gap-5 items-center">
-              <img
-                src={commentUsers[index] && commentUsers[index].profilePicture}
-                alt="https://imgs.search.brave.com/VtHaXSbqH1ZMOqr9D39V6nWtacRWYqK01jdkMhcQLyY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzEwLzI5LzY2LzA1/LzM2MF9GXzEwMjk2/NjA1NzVfRFBkd2tu/RWE3aGlFdmVSdWpz/Qm14WExmRnhKTTMx/VUEuanBn"
-                className="object-cover rounded-full h-7 w-7"
-              />
-              <h2 className="font-semibold text-sm">
-                {commentUsers[index] && commentUsers[index].username}
-              </h2>
-              <div className="flex gap-2 font-light text-xs">
-                <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
-                <span>{new Date(comment.createdAt).toLocaleTimeString()}</span>
-              </div>
-            </div>
-            <div className="px-10 font-light text-sm w-full border-b border-slate-300 pb-4">
-              <p>{comment.content}</p>
-            </div>
-          </>
-        );
-      })}
+      <div className="text-2xl border-b border-slate-500 py-4 mt-10 ps-2 flex gap-2">
+        <h1>Comments</h1>
+        <div className="border border-b border-black px-3 py-1 text-xl">
+          <p>{postComments.length}</p>
+        </div>
+      </div>
+      {postComments.length === 0 && <p>No comments found</p>}
+      {postComments.length > 0 &&
+        postComments.map((comment, index) => {
+          return (
+            <>
+              <Comment key={comment._id} comment={comment} index={index}  />
+            </>
+          );
+        })}
     </div>
   );
 }

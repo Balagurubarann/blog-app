@@ -6,8 +6,6 @@ exports.createComment = async (req, res, next) => {
     const { content, postId, userId } = req.body;
     const { userId: _id } = req.user;
 
-    console.log(userId, _id);
-
     if (!content || !postId || !userId) {
       return res.status(404).json({ message: "All fields are required", success: false });
     }
@@ -42,6 +40,32 @@ exports.getComments = async (req, res, next) => {
     if (comments) {
       return res.json({ message: "comments found", comments });
     }
+
+  } catch (error) {
+    next(error);
+  }
+
+}
+
+exports.editComment = async (req, res, next) => {
+
+  try {
+
+    const { commentId } = req.params;
+
+    const { content } = req.body;
+
+    if (!commentId) {
+      return res.json({ message: "No comment found", success: false });
+    }
+
+    const updatedComment = await Comment.findByIdAndUpdate({ _id: commentId }, {
+      $set: {
+        content
+      }
+    },  { new: true });
+
+    return res.status(200).json({ message: "Comment Updated", success: true, updatedComment });
 
   } catch (error) {
     next(error);

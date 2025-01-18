@@ -54,11 +54,18 @@ export default function CommentSection({ postId }) {
     <>
       {currentUser ? (
         <div className="">
-          <div className="">
+          <div className="my-3">
             <p className="text-left py-6">
               Logged in as{" "}
               <span className="text-blue-600">@{currentUser.email}</span>
             </p>
+            {
+              commentError && (
+                <Alert color="failure">
+                  { commentError }
+                </Alert>
+              )
+            }
           </div>
           <form
             onSubmit={handlePostComment}
@@ -73,9 +80,6 @@ export default function CommentSection({ postId }) {
               Post comment
             </Button>
           </form>
-          <h1 className="text-2xl border-b border-slate-500 py-4 mt-10 ps-2">
-            Comments
-          </h1>
           <Comments postId={postId} />
         </div>
       ) : (

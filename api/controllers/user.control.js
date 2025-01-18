@@ -145,9 +145,9 @@ exports.getUser = async (req, res, next) => {
     if (userId) {
       const user = await User.findOne({ _id: userId });
 
-      const { username, profilePicture } = user;
+      const { username, profilePicture, _id } = user;
 
-      return res.status(200).json({ message: "User Fetched", username, profilePicture });
+      return res.status(200).json({ message: "User Fetched", username, profilePicture, _id });
     }
 
   } catch (error) {
