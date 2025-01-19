@@ -1,6 +1,5 @@
 import { Dropdown, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { FaEllipsisV } from "react-icons/fa";
 
 import { useSelector } from "react-redux";
 import Comment from "./Comment.jsx";

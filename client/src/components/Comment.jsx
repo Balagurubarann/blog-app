@@ -8,6 +8,7 @@ export default function Comment({ comment, index }) {
   const [commentUsers, setCommentUsers] = useState([]);
   const [commentEditing, setCommentEditing] = useState(false);
   const [editedContent, setEditedContent] = useState("");
+  const [commentError, setCommentError] = useState("");
 
   useEffect(() => {
     async function fetchUser(userId) {
@@ -26,7 +27,7 @@ export default function Comment({ comment, index }) {
     }
 
     fetchUser(comment.userId);
-  }, []);
+  }, [comment]);
 
   function handleEdit(e) {
     setCommentEditing(true);
@@ -45,13 +46,43 @@ export default function Comment({ comment, index }) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ content: editedContent })
-      })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setCommentError(data.message);
+      } else {
+        setCommentEditing(false);
+      }
 
     } catch (error) {
       throw error;
     }
 
   }
+
+  async function deleteComment(e) {
+
+    try {
+
+      const response = await fetch(`/api/comment/delete-comment/${comment._id}`, {
+        method: "DELETE"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setCommentError(data.message);
+      } else {
+
+      }
+
+    } catch (error) {
+      setCommentError(error.message);
+    }
+
+  } 
 
   return (
     <div>
@@ -90,7 +121,7 @@ export default function Comment({ comment, index }) {
           )}
           <Dropdown.Divider />
           {(currentUser.isAdmin || currentUser._id === comment.userId) && (
-            <Dropdown.Item className="py-0 font-light text-xs text-red-500">
+            <Dropdown.Item className="py-0 font-light text-xs text-red-500" onClick={deleteComment}>
               Delete
             </Dropdown.Item>
           )}
@@ -99,8 +130,7 @@ export default function Comment({ comment, index }) {
       <div className="px-10 font-light text-sm w-full border-b border-slate-300 pb-4">
         {
           commentEditing ? <div className="flex flex-col gap-2">
-          <Textarea className="resize-none p-3">
-            { editedContent }
+          <Textarea className="resize-none p-3" value={editedContent} onChange={e => setEditedContent(e.target.value)}>
           </Textarea>
           <div className="button-group flex gap-5 justify-end">
             <Button className="border-b bg-blue-500" onClick={updateComment}>

@@ -72,3 +72,29 @@ exports.editComment = async (req, res, next) => {
   }
 
 }
+
+exports.deleteComment = async (req, res, next) => {
+
+  try {
+
+    const { commentId } = req.params;
+
+    if (!commentId) {
+      return res.status(404).json({ message: "No comment id found", success:false });
+    }
+
+    await Comment.findByIdAndDelete({ _id: commentId })
+
+      .then(() => {
+        return res.status(200).json({ message: "Comment deleted successfully", success: true })
+      })
+
+      .catch(err => {
+        return res.status(400).json({ message: "Comment deletion failed", success: false })
+      })
+
+  } catch (error) {
+    next(error);
+  }
+
+}
