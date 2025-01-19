@@ -7,5 +7,6 @@ router
     .get('/get-posts', verifyUser, getPosts)
     .put('/update/:postId/:userId', verifyUser, updatePost)
     .delete('/delete/:postId/:userId', verifyUser, deletePost)
+    .get('/', verifyUser, getPosts)
 
 module.exports = router;
