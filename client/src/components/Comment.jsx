@@ -2,6 +2,7 @@ import { Alert, Button, Dropdown, Textarea } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { FaCheck, FaCross, FaEllipsisV, FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 export default function Comment({ comment, setPostComments }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -107,10 +108,12 @@ export default function Comment({ comment, setPostComments }) {
           <h2 className="font-semibold text-sm">
             {commentUsers[comment.userId] && commentUsers[comment.userId].username}
           </h2>
-        </div>
-        <div className="hidden gap-2 font-light text-xs sm:flex">
-          <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
-          <span>{new Date(comment.createdAt).toLocaleTimeString()}</span>
+          <h2 className="font-light text-xs">
+            {
+              moment(comment.createdAt).fromNow()
+            }
+          </h2>
+
         </div>
         <div className="sm:hidden font-light text-xs">
           <span>

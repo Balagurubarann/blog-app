@@ -2,6 +2,7 @@ import { Button, Spinner } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CommentSection from "../components/CommentSection";
+import moment from "moment";
 
 export default function PostPage() {
   const [loading, setLoading] = useState(false);
@@ -99,7 +100,7 @@ export default function PostPage() {
             }
           </span>
           <span>
-            { post && new Date(post.createdAt).toLocaleDateString() }
+            { moment(post.createdAt).fromNow() }
           </span>
         </div>
       </div>

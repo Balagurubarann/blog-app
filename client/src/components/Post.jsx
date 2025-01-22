@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
   FaComment,
@@ -61,11 +62,12 @@ export default function Post({ post }) {
         </Link>
       </div>
 
-      <Link to={`/post/${post.slug}`}>
-      <h2 className="p-2 pt-4 text-sm font-light">
-        {post.title}
-      </h2>
-      </Link>
+      <div className="flex gap-4 items-center p-2 pt-4">
+        <Link to={`/post/${post.slug}`}>
+          <h2 className="text-sm font-light">{post.title}</h2>
+        </Link>
+        <p className="text-xs font-light">{ moment(post.createdAt).fromNow() }</p>
+      </div>
 
       <div className="user-action-group flex gap-5 px-2 py-4">
         <FaRegThumbsUp className="cursor-pointer" />
