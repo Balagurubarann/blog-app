@@ -35,7 +35,7 @@ export default function Post({ post }) {
   }, [post.userId]);
 
   return (
-    <div className="max-w-[700px] mx-auto my-20 border-b border-slate-500 pb-10">
+    <div className="dark:text-white max-w-[700px] mx-auto my-20 border-b border-slate-500 pb-10">
       <div className="post-header flex items-center mb-6 py-3 justify-between">
         <div className="post-author flex gap-3 items-center justify-start w-20">
           <img
