@@ -36,7 +36,7 @@ export default function Post({ post }) {
   }, [post.userId]);
 
   return (
-    <div className="dark:text-white max-w-[700px] mx-auto my-20 border-b border-slate-500 pb-10">
+    <main className="dark:text-white max-w-[700px] mx-auto my-20 border-b border-slate-500 pb-6 p-4">
       <div className="post-header flex items-center mb-6 py-3 justify-between">
         <div className="post-author flex gap-3 items-center justify-start w-20">
           <img
@@ -57,7 +57,7 @@ export default function Post({ post }) {
           <img
             src={post.image}
             alt={post.title}
-            className="object-cover max-w-[700px] rounded-lg cursor-pointer"
+            className="object-cover max-h-[700px] rounded-lg cursor-pointer w-full"
           />
         </Link>
       </div>
@@ -75,6 +75,6 @@ export default function Post({ post }) {
         <FaRegComment className="cursor-pointer" />
         <FaRegBookmark className="cursor-pointer" />
       </div>
-    </div>
+    </main>
   );
 }
