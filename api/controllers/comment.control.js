@@ -103,21 +103,7 @@ exports.updateCommentLike = async (req, res, next) => {
 
   try {
 
-    const { commentId } = req.params;
-
-    const { likedUsers } = req.body;
-
-    if (!commentId) {
-      return res.status(404).json({ message: "No Message Found", success: false });
-    }
-
-    const updatedLikes = await Comment.findByIdAndUpdate({ _id: commentId }, {
-      $set: {
-        likedUsers
-      }
-    }, { new: true });
-
-    return res.status(200).json({ message: "Likes Updated", success: true, updatedLikes });
+    
 
   } catch (error) {
     next(error);
@@ -125,28 +111,3 @@ exports.updateCommentLike = async (req, res, next) => {
 
 }
 
-exports.updateCommentDisLike = async (req, res, next) => {
-
-  try {
-
-    const { commentId } = req.params;
-
-    const { disLikedUsers } = req.body;
-
-    if (!commentId) {
-      return res.status(404).json({ message: "No Message Found", success: false });
-    }
-
-    const updatedDisLikes = await Comment.findByIdAndUpdate({ _id: commentId }, {
-      $set: {
-        disLikedUsers
-      }
-    }, { new: true });
-
-    return res.status(200).json({ message: "Likes Updated", success: true, updatedDisLikes });
-
-  } catch (error) {
-    next(error);
-  }
-
-}

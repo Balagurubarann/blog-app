@@ -4,9 +4,6 @@ import {
   FaCheck,
   FaCross,
   FaEllipsisV,
-  FaRegThumbsDown,
-  FaRegThumbsUp,
-  FaThumbsDown,
   FaThumbsUp,
   FaTimes,
 } from "react-icons/fa";
@@ -20,13 +17,7 @@ export default function Comment({ comment, setPostComments }) {
   const [editedContent, setEditedContent] = useState("");
   const [commentError, setCommentError] = useState("");
   const [commentText, setCommentText] = useState(comment.content);
-  const [isCommentLiked, setIsCommentLiked] = useState(
-    comment.likedUsers.includes(currentUser._id) || false
-  );
-  const [isCommentDisLiked, setIsCommentDisLiked] = useState(comment.disLikedUsers.includes(currentUser._id) || false);
 
-  const [commentLikeCount, setCommentLikeCount] = useState(0);
-  const [commentDisLikeCount, setCommentDisLikeCount] = useState(0);
 
   useEffect(() => {
     async function fetchUser(userId) {
@@ -105,154 +96,18 @@ export default function Comment({ comment, setPostComments }) {
   }
 
   async function handleLike(e) {
-    setIsCommentLiked(!isCommentLiked);
-
-    if (comment.likedUsers.includes(currentUser._id)) {
-      return;
-    }
-
-    if (comment.disLikedUsers.includes(currentUser._id)) {
-      handleUndoDisLike();
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/comment/updateLike/${comment._id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          likedUsers: [...comment.likedUsers, currentUser._id],
-        }),
-      });
-
-      console.log(response);
-
-      const data = await response.json();
-
-      console.log(data);
-
-      if (!response.ok) {
-        setCommentError(data.message);
-      } else {
-        setCommentLikeCount(comment.likedUsers.length + 1);
-      }
-    } catch (error) {
-      throw error.message;
-    }
+  
   }
 
   async function handleUndoLike() {
-    setIsCommentLiked(!isCommentLiked);
-
-    if (!comment.likedUsers.includes(currentUser._id)) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/comment/updateLike/${comment._id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          likedUsers: comment.likedUsers.filter(
-            (user) => user !== currentUser._id
-          ),
-        }),
-      });
-
-      console.log(response);
-
-      const data = await response.json();
-
-      console.log(data);
-
-      if (!response.ok) {
-        setCommentError(data.message);
-      } else {
-        setCommentLikeCount(comment.likedUsers.length - 1);
-      }
-    } catch (error) {
-      throw error.message;
-    }
+    
   }
 
-  async function handleDisLike(e) {
-
-    setIsCommentDisLiked(!isCommentDisLiked);
-
-    if (comment.likedUsers.includes(currentUser._id)) {
-      handleUndoLike();
-      return;
-    }
-
-    try {
-
-      const response = await fetch(`/api/comment/updateDisLike/${comment._id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ disLikedUsers: [...comment.disLikedUsers, currentUser._id] })
-      });
-
-      console.log(response);
-
-      const data = await response.json();
-      
-      console.log(data);
-
-      if (!response.ok) {
-        setCommentError(data.message);
-      } else {
-        setCommentDisLikeCount(comment.disLikedUsers.length + 1);
-      }
-
-    } catch (error) {
-      throw error.message;
-    }
+  async function handleDisLike(e) {    
 
   }
 
   async function handleUndoDisLike(e) {
-
-    setIsCommentDisLiked(!isCommentDisLiked);
-
-    if (!comment.disLikedUsers.includes(currentUser._id)) {
-      return;
-    }
-
-    try {
-
-      const response = await fetch(`/api/comment/updateDisLike/${comment._id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          disLikedUsers: comment.disLikedUsers.filter(
-            (user) => user !== currentUser._id
-          ),
-        }),
-      });
-
-      console.log(response);
-
-      const data = await response.json();
-
-      console.log(data);
-
-      if (!response.ok) {
-        setCommentError(data.message);
-      } else {
-        setCommentDisLikeCount(comment.disLikedUsers.length - 1);
-      }
-
-    } catch (error) {
-      throw error.message;
-    }
 
   }
 
@@ -324,29 +179,10 @@ export default function Comment({ comment, setPostComments }) {
         ) : (
           <p className="p-3">{commentText}</p>
         )}
-        <div className="py-2 px-3 flex gap-6">
-          <span className="flex gap-2">
-            {isCommentLiked ? (
-              <FaThumbsUp className="cursor-pointer" onClick={handleUndoLike} />
-            ) : (
-              <FaRegThumbsUp className="cursor-pointer" onClick={handleLike} />
-            )}
-            <p>{comment.likedUsers.length > 0 && comment.likedUsers.length}</p>
-          </span>
-          <span className="flex gap-2">
-            {isCommentDisLiked ? (
-              <FaThumbsDown
-                className="cursor-pointer"
-                onClick={handleUndoDisLike}
-              />
-            ) : (
-              <FaRegThumbsDown
-                className="cursor-pointer"
-                onClick={handleDisLike}
-              />
-            )}
-            <p>{comment.disLikedUsers.length > 0 && comment.disLikedUsers.length}</p>
-          </span>
+        <div className="px-3">
+          <button className="text-gray-400" type="button">
+            <FaThumbsUp />
+          </button>
         </div>
       </div>
       {commentError && <Alert color="failure" content={commentError} />}
