@@ -10,7 +10,7 @@ import {
 import { useSelector } from "react-redux";
 import moment from "moment";
 
-export default function Comment({ comment, setPostComments }) {
+export default function Comment({ comment, setPostComments, onLike }) {
   const { currentUser } = useSelector((state) => state.user);
   const [commentUsers, setCommentUsers] = useState([]);
   const [commentEditing, setCommentEditing] = useState(false);
@@ -95,14 +95,6 @@ export default function Comment({ comment, setPostComments }) {
     }
   }
 
-  async function handleLike(e) {
-  
-  }
-
-  async function handleUndoLike() {
-    
-  }
-
   async function handleDisLike(e) {    
 
   }
@@ -177,10 +169,10 @@ export default function Comment({ comment, setPostComments }) {
             </div>
           </div>
         ) : (
-          <p className="p-3">{commentText}</p>
+          <p className="py-3 px-2">{commentText}</p>
         )}
-        <div className="px-3">
-          <button className="text-gray-400" type="button">
+        <div className="px-3 pt-3">
+          <button className="text-gray-400" type="button" onClick={() => onLike(comment._id)}>
             <FaThumbsUp />
           </button>
         </div>
