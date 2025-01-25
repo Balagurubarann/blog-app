@@ -20,7 +20,7 @@ export default function Comment({ comment, setPostComments }) {
   const [editedContent, setEditedContent] = useState("");
   const [commentError, setCommentError] = useState("");
   const [commentText, setCommentText] = useState(comment.content);
-  const [isCommentLiked, setIsCommentLiked] = useState(false);
+  const [isCommentLiked, setIsCommentLiked] = useState(comment.likedUsers.includes(currentUser._id));
   const [isCommentDisLiked, setIsCommentDisLiked] = useState(false);
 
   useEffect(() => {
@@ -99,76 +99,13 @@ export default function Comment({ comment, setPostComments }) {
     }
   }
 
+  
   async function handleLike(e) {
-    setIsCommentLiked(!isCommentLiked);
-
-    try {
-      if (isCommentDisLiked) {
-        setIsCommentDisLiked(false);
-      }
-
-      if (!isCommentLiked) {
-        const response = await fetch(
-          `/api/comment/updateLike/${comment._id}/`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              likedUsers: [...comment.likedUsers, currentUser._id],
-            }),
-          }
-        );
-
-        console.log(response);
-
-        const data = await response.json();
-
-        console.log(data);
-
-        if (!response.ok) {
-          setCommentError(data.message);
-        }
-      } else {
-
-        const response = await fetch(
-          `/api/comment/updateLike/${comment._id}/`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              likedUsers: comment.likedUsers.filter(user => user !== currentUser._id)
-            }),
-          }
-        );
-
-        console.log(response);
-
-        const data = await response.json();
-
-        console.log(data);
-
-        if (!response.ok) {
-          setCommentError(data.message);
-        }
-
-      }
-
-    } catch (error) {
-      console.log(error.message);
-      throw error.message;
-    }
+    
   }
 
   async function handleDisLike(e) {
-    if (isCommentLiked) {
-      setIsCommentLiked(false);
-    }
-
-    setIsCommentDisLiked(!isCommentDisLiked);
+    
   }
 
   return (
