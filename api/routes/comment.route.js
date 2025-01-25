@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { createComment, getComments, editComment, deleteComment, updateCommentLike } = require("../controllers/comment.control.js");
+const { createComment, getComments, editComment, deleteComment, updateCommentLike, updateCommentDisLike } = require("../controllers/comment.control.js");
 const { verifyUser } = require("../utils/verifyUser.js")
 
 router
@@ -8,5 +8,6 @@ router
     .put("/edit-comment/:commentId", verifyUser, editComment)
     .delete("/delete-comment/:commentId", verifyUser, deleteComment)
     .put("/updateLike/:commentId", verifyUser, updateCommentLike)
+    .put("/updateDisLike/:commentId", verifyUser, updateCommentDisLike)
 
 module.exports = router;

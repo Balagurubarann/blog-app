@@ -23,7 +23,10 @@ export default function Comment({ comment, setPostComments }) {
   const [isCommentLiked, setIsCommentLiked] = useState(
     comment.likedUsers.includes(currentUser._id) || false
   );
-  const [isCommentDisLiked, setIsCommentDisLiked] = useState(false);
+  const [isCommentDisLiked, setIsCommentDisLiked] = useState(comment.disLikedUsers.includes(currentUser._id) || false);
+
+  const [commentLikeCount, setCommentLikeCount] = useState(0);
+  const [commentDisLikeCount, setCommentDisLikeCount] = useState(0);
 
   useEffect(() => {
     async function fetchUser(userId) {
@@ -108,6 +111,11 @@ export default function Comment({ comment, setPostComments }) {
       return;
     }
 
+    if (comment.disLikedUsers.includes(currentUser._id)) {
+      handleUndoDisLike();
+      return;
+    }
+
     try {
       const response = await fetch(`/api/comment/updateLike/${comment._id}/`, {
         method: "PUT",
@@ -127,13 +135,15 @@ export default function Comment({ comment, setPostComments }) {
 
       if (!response.ok) {
         setCommentError(data.message);
+      } else {
+        setCommentLikeCount(comment.likedUsers.length + 1);
       }
     } catch (error) {
       throw error.message;
     }
   }
 
-  async function handleUndoLike(e) {
+  async function handleUndoLike() {
     setIsCommentLiked(!isCommentLiked);
 
     if (!comment.likedUsers.includes(currentUser._id)) {
@@ -161,6 +171,8 @@ export default function Comment({ comment, setPostComments }) {
 
       if (!response.ok) {
         setCommentError(data.message);
+      } else {
+        setCommentLikeCount(comment.likedUsers.length - 1);
       }
     } catch (error) {
       throw error.message;
@@ -171,9 +183,35 @@ export default function Comment({ comment, setPostComments }) {
 
     setIsCommentDisLiked(!isCommentDisLiked);
 
-    if (comment.disLikedUsers.includes(currentUser._id)) {
-      handleUndoDisLike();
+    if (comment.likedUsers.includes(currentUser._id)) {
+      handleUndoLike();
       return;
+    }
+
+    try {
+
+      const response = await fetch(`/api/comment/updateDisLike/${comment._id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ disLikedUsers: [...comment.disLikedUsers, currentUser._id] })
+      });
+
+      console.log(response);
+
+      const data = await response.json();
+      
+      console.log(data);
+
+      if (!response.ok) {
+        setCommentError(data.message);
+      } else {
+        setCommentDisLikeCount(comment.disLikedUsers.length + 1);
+      }
+
+    } catch (error) {
+      throw error.message;
     }
 
   }
@@ -181,6 +219,40 @@ export default function Comment({ comment, setPostComments }) {
   async function handleUndoDisLike(e) {
 
     setIsCommentDisLiked(!isCommentDisLiked);
+
+    if (!comment.disLikedUsers.includes(currentUser._id)) {
+      return;
+    }
+
+    try {
+
+      const response = await fetch(`/api/comment/updateDisLike/${comment._id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          disLikedUsers: comment.disLikedUsers.filter(
+            (user) => user !== currentUser._id
+          ),
+        }),
+      });
+
+      console.log(response);
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (!response.ok) {
+        setCommentError(data.message);
+      } else {
+        setCommentDisLikeCount(comment.disLikedUsers.length - 1);
+      }
+
+    } catch (error) {
+      throw error.message;
+    }
 
   }
 
