@@ -20,7 +20,9 @@ export default function Comment({ comment, setPostComments }) {
   const [editedContent, setEditedContent] = useState("");
   const [commentError, setCommentError] = useState("");
   const [commentText, setCommentText] = useState(comment.content);
-  const [isCommentLiked, setIsCommentLiked] = useState(comment.likedUsers.includes(currentUser._id));
+  const [isCommentLiked, setIsCommentLiked] = useState(
+    comment.likedUsers.includes(currentUser._id) || false
+  );
   const [isCommentDisLiked, setIsCommentDisLiked] = useState(false);
 
   useEffect(() => {
@@ -99,13 +101,87 @@ export default function Comment({ comment, setPostComments }) {
     }
   }
 
-  
   async function handleLike(e) {
-    
+    setIsCommentLiked(!isCommentLiked);
+
+    if (comment.likedUsers.includes(currentUser._id)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/comment/updateLike/${comment._id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          likedUsers: [...comment.likedUsers, currentUser._id],
+        }),
+      });
+
+      console.log(response);
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (!response.ok) {
+        setCommentError(data.message);
+      }
+    } catch (error) {
+      throw error.message;
+    }
+  }
+
+  async function handleUndoLike(e) {
+    setIsCommentLiked(!isCommentLiked);
+
+    if (!comment.likedUsers.includes(currentUser._id)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/comment/updateLike/${comment._id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          likedUsers: comment.likedUsers.filter(
+            (user) => user !== currentUser._id
+          ),
+        }),
+      });
+
+      console.log(response);
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (!response.ok) {
+        setCommentError(data.message);
+      }
+    } catch (error) {
+      throw error.message;
+    }
   }
 
   async function handleDisLike(e) {
-    
+
+    setIsCommentDisLiked(!isCommentDisLiked);
+
+    if (comment.disLikedUsers.includes(currentUser._id)) {
+      handleUndoDisLike();
+      return;
+    }
+
+  }
+
+  async function handleUndoDisLike(e) {
+
+    setIsCommentDisLiked(!isCommentDisLiked);
+
   }
 
   return (
@@ -179,18 +255,25 @@ export default function Comment({ comment, setPostComments }) {
         <div className="py-2 px-3 flex gap-6">
           <span className="flex gap-2">
             {isCommentLiked ? (
-              <FaThumbsUp className="cursor-pointer" onClick={handleLike} />
+              <FaThumbsUp className="cursor-pointer" onClick={handleUndoLike} />
             ) : (
               <FaRegThumbsUp className="cursor-pointer" onClick={handleLike} />
             )}
             <p>{comment.likedUsers.length > 0 && comment.likedUsers.length}</p>
           </span>
-          <span onClick={handleDisLike}>
+          <span className="flex gap-2">
             {isCommentDisLiked ? (
-              <FaThumbsDown className="cursor-pointer" />
+              <FaThumbsDown
+                className="cursor-pointer"
+                onClick={handleUndoDisLike}
+              />
             ) : (
-              <FaRegThumbsDown className="cursor-pointer" />
+              <FaRegThumbsDown
+                className="cursor-pointer"
+                onClick={handleDisLike}
+              />
             )}
+            <p>{comment.disLikedUsers.length > 0 && comment.disLikedUsers.length}</p>
           </span>
         </div>
       </div>
