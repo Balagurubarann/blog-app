@@ -25,6 +25,7 @@ const commentSchema = new Schema({
 
     likeNos: {
         type: Number,
+        default: 0
     },
 
     disLikedUsers: {

@@ -78,33 +78,37 @@ export default function CommentSection({ postId }) {
   }
 
   async function handleLike(commentId) {
+    
+    console.log(commentId);
+
     try {
-      if (!currentUser) {
-        navigate("/login");
+
+      if (!commentId) {
         return;
       }
 
-      const response = await fetch(
-        `/api/comment/updateLike/${commentId}/`,
-        {
-          method: "PUT",
-        }
-      );
+      const response = await fetch(`/api/comment/updateLike/${commentId}/`, {
+        method: "PUT"
+      });
+
+      console.log(response);
 
       const data = await response.json();
 
+      console.log(data);
+
       if (response.ok) {
-        setPostComments(postComments.map(comment => {
-          comment._id === commentId ? {
-            ...comment,
-            likedUsers: data.likeUsers,
+        console.log(postComments);
+        setPostComments(postComments.map(prevComment => {
+          prevComment._id === commentId ? {
+            ...prevComment,
+            likedUsers: data.likedUsers,
             likeNos: data.likedUsers.length
-          } : comment
-        }))
+          }: prevComment
+        }));
       }
 
     } catch (error) {
-      console.log(error.message);
       throw error.message;
     }
   }
@@ -143,14 +147,17 @@ export default function CommentSection({ postId }) {
           </div>
 
           {postComments.map((comment, index) => {
-            return (
-              <Comment
-                comment={comment}
-                key={comment._id}
-                setPostComments={setPostComments}
-                onLike={handleLike}
-              />
-            );
+            
+            if (comment) {
+              return (
+                <Comment
+                  comment={comment}
+                  key={comment._id}
+                  setPostComments={setPostComments}
+                  onLike={handleLike}
+                />
+              );
+            }
           })}
         </div>
       ) : (

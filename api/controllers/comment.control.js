@@ -109,19 +109,19 @@ exports.updateCommentLike = async (req, res, next) => {
       return res.status(404).json({ message: "No comment id found", success: false });
     }
 
-    const comment = await Comment.findById({ commentId });
+    const comment = await Comment.findOne({ _id: commentId });
 
     if (!comment) {
       return res.status(404).json({ message: "No comment found", success: false });
     }
 
-    console.log(comment);
-
     const userIndex = comment.likedUsers.indexOf(req.user.userId);
+
+    console.log(comment);
 
     if (userIndex === -1) {
       comment.likeNos += 1;
-      comment.likedUsers.push(req.user.id);
+      comment.likedUsers.push(req.user.userId);
     } else {
       comment.likeNos -= 1;
       comment.likedUsers.splice(userIndex, 1);

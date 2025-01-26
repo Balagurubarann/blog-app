@@ -18,7 +18,6 @@ export default function Comment({ comment, setPostComments, onLike }) {
   const [commentError, setCommentError] = useState("");
   const [commentText, setCommentText] = useState(comment.content);
 
-
   useEffect(() => {
     async function fetchUser(userId) {
       try {
@@ -95,13 +94,9 @@ export default function Comment({ comment, setPostComments, onLike }) {
     }
   }
 
-  async function handleDisLike(e) {    
+  async function handleDisLike(e) {}
 
-  }
-
-  async function handleUndoDisLike(e) {
-
-  }
+  async function handleUndoDisLike(e) {}
 
   return (
     <div>
@@ -171,10 +166,24 @@ export default function Comment({ comment, setPostComments, onLike }) {
         ) : (
           <p className="py-3 px-2">{commentText}</p>
         )}
-        <div className="px-3 pt-3">
-          <button className="text-gray-400" type="button" onClick={() => onLike(comment._id)}>
+        <div className="px-3 pt-3 flex gap-3 items-center">
+          <button
+            className={
+              comment.likedUsers.includes(currentUser._id)
+                ? "text-blue-400"
+                : "text-gray-400"
+            }
+            type="button"
+            onClick={() => onLike(comment._id)}
+          >
             <FaThumbsUp />
           </button>
+          <p className="translate-y-0">
+            {comment.likedUsers.length > 0 ? comment.likedUsers.length : ""}
+            {" "}
+            {comment.likedUsers.length === 1 && "Like"}
+            {comment.likedUsers.length > 1 && "Likes"}
+          </p>
         </div>
       </div>
       {commentError && <Alert color="failure" content={commentError} />}
