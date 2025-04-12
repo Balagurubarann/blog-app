@@ -54,7 +54,7 @@ exports.register = async (req, res, next) => {
         httpOnly: true,
         maxAge: 60 * 60 * 1000 * 24,
         secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production"? "none": "strict"
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       })
       .json(rest);
   } catch (error) {
@@ -96,7 +96,7 @@ exports.login = async (req, res, next) => {
         httpOnly: true,
         maxAge: 60 * 60 * 1000 * 24,
         secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production"? "none": "strict"
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       })
       .json(rest);
   } catch (error) {
@@ -124,7 +124,12 @@ exports.googleAuth = async (req, res, next) => {
 
       res
         .status(200)
-        .cookie("access_token", token, { httpOnly: true })
+        .cookie("access_token", token, {
+          httpOnly: true,
+          maxAge: 60 * 60 * 1000 * 24,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        })
         .json(rest);
     } else {
       const generatedPassword =

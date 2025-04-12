@@ -34,6 +34,8 @@ export default function Header() {
     }
 
   }
+  
+
 
   return (
     <Navbar className="border-b py-6">
