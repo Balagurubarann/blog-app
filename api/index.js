@@ -11,7 +11,7 @@ const { handleError } = require("./middleware/error.handle.js");
 require("dotenv").config();
 
 const app = express();
-const { PORT } = process.env;
+const { PORT, FRONTEND_URL } = process.env;
 connection
   .then(() => {
     console.log("Database Connected!");
@@ -22,7 +22,7 @@ connection
 
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173/',
+  origin: FRONTEND_URL,
   credentials: true
 }))
 
