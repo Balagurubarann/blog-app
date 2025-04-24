@@ -164,3 +164,29 @@ exports.googleAuth = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.authorizeUser = async (req, res, next) => {
+
+  try {
+
+    const token = req.cookies.access_token;
+
+    if (!token) {
+      return next(errorHandler(401, "You are not authenticated"));
+    }
+    const decoded = JWT.verify(token, process.env.SECRET_KEY);
+    if (!decoded) {
+      return next(errorHandler(401, "Token is not valid"));
+    }
+    const user = await User.findById(decoded.userId); 
+
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
+    }
+    return res.status(200).json({ message: "User is authenticated" });
+
+  } catch (error) {
+    next(error);
+  }
+
+}

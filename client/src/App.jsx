@@ -14,8 +14,11 @@ import CreatePost from "./pages/CreatePost";
 import UpdatePost from "./pages/UpdatePost";
 import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
+import useAuth from "./hooks/useAuth";
 
 function App() {
+  const { authorized } = useAuth();
+
   return (
     <>
       <BrowserRouter>
@@ -24,17 +27,21 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/post/:postSlug" element={<PostPage />} />
-          <Route element={<PrivateRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Route>
-          <Route element={<AdminPrivateRoute />}>
-            <Route path="/create-post" element={<CreatePost />} />
-            <Route path={`/update-post/:postId`} element={<UpdatePost />} />
-          </Route>
+          {authorized && (
+            <>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route element={<PrivateRoute />}>
+                <Route path="/post/:postSlug" element={<PostPage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Route>
+              <Route element={<AdminPrivateRoute />}>
+                <Route path="/create-post" element={<CreatePost />} />
+                <Route path={`/update-post/:postId`} element={<UpdatePost />} />
+              </Route>
+            </>
+          )}
         </Routes>
         {/* <FooterComponent /> */}
       </BrowserRouter>
